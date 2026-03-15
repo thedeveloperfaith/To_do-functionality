@@ -7,15 +7,43 @@ const Todo = () => {
     const [value, setValue] =useState("")
     const [todos, setTodos] =useState([])
     const [mom , setMom] =useState(false)
+    const [editBtn, setEditBtn] =useState(null)
 
 
     function addTodo(e){
         e.preventDefault()
-        if (!value.trim()) return setMom(true)
-        setTodos([...todos,value])
+        if (!value.trim()) return 
 
+        if (editBtn !== null){
+            const newTodos = todos.map((item, index) => {
+                if (index === editBtn){
+                    return value
+                } else {
+                    return item
+                }
+            }) 
+             
+            setTodos(newTodos)
+            setEditBtn(null)
+        } else {
+            setMom(true)
+            setTodos([...todos,value])
+        } 
         setValue("")
     }
+
+    function editTodo (index) {
+        setValue(todos[index])
+        setEditBtn(index)
+    }
+
+    function deleteTodo(index) {
+        const newTodos = todos.filter((item, n) => n !== index)
+        setTodos(newTodos)
+    }
+
+
+
 
   return (
     <>
@@ -33,9 +61,11 @@ const Todo = () => {
                     {
                         mom ? (
                             <ul>
-                            { todos.map((item) => (
-                                <li>{item}</li>
-
+                            { todos.map((item, index) => (
+                                <li key ={index}>{item}
+                                <Button onClick={ () => editTodo(index)}  text="edit"className="edit"/>
+                                <Button onClick={ () => deleteTodo (index)}  text="del"className="delete"/>
+                                </li>
                             ))}
                         </ul>
                         ) : <p>No Task yet</p>
